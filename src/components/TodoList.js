@@ -1,21 +1,10 @@
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import TodoItem from './TodoItem';
 
-const ListTodo = ({ todos, onChange, onDelete, onEdit, isMode }) => {
+const ListTodo = ({ todos, onChange, onDelete, onUpdate }) => {
   return (
     <>
       {todos.map((item) => {
-        return (
-          <TodoItem
-            key={item.id}
-            todos={item}
-            onChange={onChange}
-            onDelete={onDelete}
-            onEdit={onEdit}
-            isMode={isMode}
-          />
-        );
+        return <TodoItem key={item.id} todos={item} onChange={onChange} onDelete={onDelete} onUpdate={onUpdate} />;
       })}
     </>
   );

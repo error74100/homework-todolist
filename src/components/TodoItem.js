@@ -1,12 +1,21 @@
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { useState } from 'react';
 
-const TodoItem = ({ todos, onChange, onDelete, onEdit, isMode }) => {
-  console.log(isMode);
+const TodoItem = ({ todos, onChange, onDelete, onUpdate }) => {
+  const [mode, setMode] = useState('read');
+  const [text, setText] = useState(todos.todo);
+  let className = '';
+  let classHidden = 'hidden';
+
+  if (mode === 'edit') {
+    className = 'hidden';
+    classHidden = '';
+  }
 
   return (
     <>
-      <Form className="d-flex gap-2 p-2 align-items-center">
+      <Form className={`d-flex gap-2 align-items-center ${className}`} style={{ padding: '5px 0' }}>
         <Form.Check // prettier-ignore
           type="checkbox"
           id={`chk-${todos.id}`}
@@ -29,30 +38,54 @@ const TodoItem = ({ todos, onChange, onDelete, onEdit, isMode }) => {
           variant="info"
           size="sm"
           onClick={() => {
-            onEdit(todos.id);
+            setMode('edit');
           }}
         >
           Edit
         </Button>
       </Form>
 
-      <div className="d-flex align-items-center gap-2">
-        <Form.Group controlId={`chk_edit_${todos.id}`}>
-          <Form.Control
-            type="text"
-            value="기존 입력값"
-            onChange={() => {
-              console.log(111);
-            }}
-          />
-        </Form.Group>
-        <Button variant="success" size="sm">
+      <Form.Group
+        controlId={`chk_edit_${todos.id}`}
+        className={`d-flex align-items-center gap-2 ${classHidden}`}
+        style={{ padding: '5px 0' }}
+      >
+        <Form.Check // prettier-ignore
+          type="checkbox"
+          id={`chk-edit-${todos.id}`}
+          checked={todos.isChecked}
+          onChange={() => {
+            onChange(todos.id);
+          }}
+        />
+        <Form.Control
+          type="text"
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value);
+          }}
+        />
+        <Button
+          variant="success"
+          size="sm"
+          onClick={() => {
+            onUpdate(todos.id, text);
+            setMode('read');
+          }}
+        >
           Update
         </Button>
-        <Button variant="secondary" size="sm">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => {
+            setMode('read');
+            setText(todos.todo);
+          }}
+        >
           Cancle
         </Button>
-      </div>
+      </Form.Group>
     </>
   );
 };

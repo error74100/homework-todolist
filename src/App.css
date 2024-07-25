@@ -10,3 +10,7 @@ h2 {
 .form-check input[type='checkbox']:checked + label {
   text-decoration: line-through;
 }
+
+.hidden {
+  display: none !important;
+}

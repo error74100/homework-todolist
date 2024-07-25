@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import TodoCreate from './components/TodoCreate';
 import TodoList from './components/TodoList';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 let data = [
   { id: 1, todo: 'todo 1', isChecked: true },
@@ -10,37 +10,66 @@ let data = [
 ];
 
 function App() {
-  const [todos, setTodos] = useState([...data]);
-  const [isMode, setIsMode] = useState('read');
-  let ID_MAX = todos.length + 1;
+  const [todos, setTodos] = useState(null);
+  let ID_MAX = 2;
+
+  useEffect(() => {
+    const isData = localStorage.getItem('todos');
+
+    if (isData === null) {
+      setTodos(data);
+    } else {
+      setTodos(JSON.parse(isData));
+    }
+  }, []);
+
+  const setStorage = (newTodos) => {
+    localStorage.setItem('todos', JSON.stringify(newTodos));
+  };
+
+  const isData = localStorage.getItem('todos');
+
+  if (isData !== null) {
+    const maxNum = JSON.parse(isData);
+
+    maxNum.forEach((item) => {
+      if (ID_MAX < item.id) {
+        ID_MAX = item.id;
+      }
+    });
+  }
 
   const onCreate = (todo) => {
-    const newTodos = [...todos, { id: ID_MAX, todo: todo, isChecked: false }];
+    const newTodos = [...todos, { id: ID_MAX + 1, todo: todo, isChecked: false }];
 
     setTodos(newTodos);
+    setStorage(newTodos);
 
     ID_MAX++;
   };
 
   const onChange = (id) => {
     const todo = [...todos];
-    const newTodo = todo.map((item) =>
-      item.id === id ? { ...item, isChecked: !item.isChecked } : item
-    );
+    const newTodos = todo.map((item) => (item.id === id ? { ...item, isChecked: !item.isChecked } : item));
 
-    setTodos(newTodo);
+    setTodos(newTodos);
+    setStorage(newTodos);
   };
 
-  const onEdit = (id) => {
-    console.log(id);
-    setIsMode('edit');
+  const onUpdate = (id, text) => {
+    const todo = [...todos];
+    const newTodos = todo.map((item) => (item.id === id ? { ...item, todo: text } : item));
+
+    setTodos(newTodos);
+    setStorage(newTodos);
   };
 
   const onDelete = (id) => {
     const todo = [...todos];
-    const newTodo = todo.filter((item) => item.id !== id);
+    const newTodos = todo.filter((item) => item.id !== id);
 
-    setTodos(newTodo);
+    setTodos(newTodos);
+    setStorage(newTodos);
   };
 
   return (
@@ -51,13 +80,7 @@ function App() {
 
       <hr />
 
-      <TodoList
-        todos={todos}
-        onChange={onChange}
-        onDelete={onDelete}
-        onEdit={onEdit}
-        isMode={isMode}
-      />
+      {todos && <TodoList todos={todos} onChange={onChange} onDelete={onDelete} onUpdate={onUpdate} />}
     </div>
   );
 }
