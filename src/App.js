@@ -4,10 +4,10 @@ import TodoCreate from './components/TodoCreate';
 import TodoList from './components/TodoList';
 import { useEffect, useState } from 'react';
 
-let data = [
-  { id: 1, todo: 'todo 1', isChecked: true },
-  { id: 2, todo: 'todo 2', isChecked: false },
-];
+// let data = [
+//   { id: 1, todo: 'todo 1', isChecked: true },
+//   { id: 2, todo: 'todo 2', isChecked: false },
+// ];
 
 function App() {
   const [todos, setTodos] = useState(null);
@@ -16,11 +16,7 @@ function App() {
   useEffect(() => {
     const isData = localStorage.getItem('todos');
 
-    if (isData === null) {
-      setTodos(data);
-    } else {
-      setTodos(JSON.parse(isData));
-    }
+    setTodos(JSON.parse(isData));
   }, []);
 
   const setStorage = (newTodos) => {
@@ -40,7 +36,10 @@ function App() {
   }
 
   const onCreate = (todo) => {
-    const newTodos = [...todos, { id: ID_MAX + 1, todo: todo, isChecked: false }];
+    const newTodos = [
+      ...todos,
+      { id: ID_MAX + 1, todo: todo, isChecked: false },
+    ];
 
     setTodos(newTodos);
     setStorage(newTodos);
@@ -50,7 +49,9 @@ function App() {
 
   const onChange = (id) => {
     const todo = [...todos];
-    const newTodos = todo.map((item) => (item.id === id ? { ...item, isChecked: !item.isChecked } : item));
+    const newTodos = todo.map((item) =>
+      item.id === id ? { ...item, isChecked: !item.isChecked } : item
+    );
 
     setTodos(newTodos);
     setStorage(newTodos);
@@ -58,7 +59,9 @@ function App() {
 
   const onUpdate = (id, text) => {
     const todo = [...todos];
-    const newTodos = todo.map((item) => (item.id === id ? { ...item, todo: text } : item));
+    const newTodos = todo.map((item) =>
+      item.id === id ? { ...item, todo: text } : item
+    );
 
     setTodos(newTodos);
     setStorage(newTodos);
@@ -80,7 +83,14 @@ function App() {
 
       <hr />
 
-      {todos && <TodoList todos={todos} onChange={onChange} onDelete={onDelete} onUpdate={onUpdate} />}
+      {todos && (
+        <TodoList
+          todos={todos}
+          onChange={onChange}
+          onDelete={onDelete}
+          onUpdate={onUpdate}
+        />
+      )}
     </div>
   );
 }
